@@ -1,0 +1,90 @@
+<!-- app/pages/inventory.html-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Product Inventory</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="homepage.html" style="color:white;font-size:18px;font-weight:bold;text-decoration:none;">ITE193</a>
+        <div class="navbar-right">
+            <div class="profile">
+                <div class="profile-icon" id="profile-icon"></div>
+                <span id="profile-username"></span>
+            </div>
+
+
+            <div class="cart-icon-wrap" onclick="goToCart()">
+                <span class="cart-icon">🛒</span>
+                <span class="cart-badge" id="cart-badge">0</span>
+            </div>
+    
+
+            <div class="dropdown">
+                <button class="dropdown-btn">☰</button>
+                <div class="dropdown-content">
+                    <a class="sub-dropdown">Settings</a>
+                    <div class="sub-dropdown-content">
+                        <a href="#" onclick="goToProfile(event)">Edit Profile</a>
+                        <a href="#" onclick="goToChangePassword(event)">Change Password</a>
+                    </div>
+                    <a href="inventory.html" style="font-weight:600;">Inventory</a>
+                    <a href="#" onclick="handleLogout(event)">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="inventory-header">
+        <h2> Product Inventory</h2>
+    </div>
+
+    <div class="inventory-container">
+        <div id="inventory-grid" class="inventory-grid">
+            <div class="empty-state">
+                <div class="empty-icon">📦</div>
+                <p>Loading inventory...</p>
+            </div>
+        </div>
+    </div>
+
+<div class="toast" id="toast"></div>
+<script src="/app/controllers/inventory.js"> </script>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-drawer-header">
+            <h3>🛒 My Cart</h3>
+            <button class="cart-drawer-close" onclick="closeCart()">✕</button>
+        </div>
+
+        <div class="cart-drawer-body" id="cart-drawer-body">
+            <!-- items render here -->
+        </div>
+
+        <!-- Footer with total and checkout -->
+        <div class="cart-drawer-footer" id="cart-drawer-footer">
+            <div class="cart-total-row">
+                <span class="cart-total-label">Total</span>
+                <span class="cart-total-amount" id="cart-total-amount">₱0.00</span>
+            </div>
+            <button class="btn-checkout" id="btn-checkout" onclick="checkout(this)">
+                Checkout
+            </button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+<script src="/app/components/cart-drawer.js"></script>
+
+
+</body>
+</html>
+             
+

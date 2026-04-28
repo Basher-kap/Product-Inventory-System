@@ -1,0 +1,51 @@
+I created Product Inventory System through steps,
+
+(1) I created a data structure for the products in the models 
+    and created some seed products for sample then seeded it to the MongoDB 
+   * Product Code
+   * Product Name
+   * Quantity
+   * Unit Price
+   * Product Image
+
+(2) Created a product inventory page on how it/what to display the product, 
+    also it can be accessed on homepage
+
+(3) Created a script on it by first making sure:
+    * the session is created on that user
+    * then loadInventory() to be able to renderTable()
+
+(4) Worked on its route to get all the products which is executed on the
+    script codes in inventory.html by fetching the API "fetch('/api/inventory')"
+
+(5) Lastly added a routers in the server.js as soon as it starts running
+
+#Some bonus/extra performes
+ - in seedProducts, there is a way to update the changes on product details
+ - created a secure escape html to prevent XSS
+
+ Next is to Create a Cart Functionality
+
+ (1) I created a Cart Schema for cart arrays of a user and its detailed desc of a product carted
+
+ (2) Created a display on the inventory page in Add cart by
+    * Add to Cart button for each product created
+
+ (3) Work on its route andd add it on the server
+ - add cart works by first after loading the products, returning it with inventory grid products and add cart button
+ - the add cart button has its corresponding productCode
+
+ #Cart Icon with Number, after a success to addToCart(productCode), it updates the Number
+  - automatic loadCartCount() executes everytime a session is created
+  - loadCartCount() happens after fetching '/api/cart'
+
+(4) I created cart drawer to show the stored items that were added to cart
+
+(5) I created a checkout by creating a async function in cart-drawer.js
+- first it will sum up all the productCode's price and multiplied by the quantity of items carted
+- upon checkout btn clicked, it will fetch a checkout route in cart.js
+ - (1) fetch all products
+ - (2) validate errors
+ - (3) if valid, deduct quantity in inventory product
+ - (4) clear cart and send toast message
+ 

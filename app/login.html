@@ -1,0 +1,37 @@
+<!-- app/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+    <!-- 2. User Authentication, login form url (login.js) -->
+    <div class="loginbox">
+        <h1>Login</h1>
+
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username">
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password">
+
+        <button type="button" 
+                onclick="handleLogin()">
+                Login
+        </button>
+
+        <!-- 3.0 Menu Enhancement (Create new user account) (register.html)-->
+         <p style="margin-top: 16px; text-align: center;">
+            No account yet? 
+            <a href="/app/register.html">Create one here</a>
+        </p>
+    </div>
+
+    <script src="controllers/login.js"></script>
+</body>
+</html>

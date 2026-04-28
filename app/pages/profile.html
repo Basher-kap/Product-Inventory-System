@@ -1,0 +1,67 @@
+<!-- app/pages/profile.html -->
+
+<!-- 1.2 User Profile Management, displays user interface -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .profile-box {
+            position: relative;
+            z-index: 1;
+            max-width: 480px;
+            margin: 60px auto;
+            padding: 40px 36px;
+            background: rgba(255, 253, 245, 0.30);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1.5px solid rgba(168, 214, 200, 0.55);
+            border-radius: 18px;
+            box-shadow: 0 8px 36px rgba(80, 140, 120, 0.12);
+        }
+        .profile-box h1 { margin-bottom: 24px; }
+        .profile-box label { display: block; margin-top: 16px; margin-bottom: 6px; }
+        .profile-box input { width: 100%; box-sizing: border-box; }
+        .profile-box button { margin-top: 24px; }
+        .back-link { display: inline-block; margin: 20px 0 0 20px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="homepage.html" style="color: white; font-size: 18px; font-weight: bold; text-decoration: none;">ITE193</a>
+        <div class="navbar-right">
+            <div class="profile">
+                <div class="profile-icon" id="profile-icon"></div>
+                <span id="profile-username"></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="profile-box">
+        <h1>User Profile</h1>
+
+        <label for="firstName">First Name:</label> <!--//6.2 Login Functionality, uses first name to fetch to be used for display (profile.js) -->
+        <input type="text" id="firstName" placeholder="Enter first name">
+
+        <label for="middleName">Middle Name:</label>
+        <input type="text" id="middleName" placeholder="Enter middle name">
+
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" placeholder="Enter last name">
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" placeholder="Enter address">
+
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" placeholder="Enter email address">
+
+        <button type="button" onclick="saveProfile()">Save Profile</button>
+    </div>
+
+    <script src="../controllers/profile.js"></script>
+</body>
+</html>

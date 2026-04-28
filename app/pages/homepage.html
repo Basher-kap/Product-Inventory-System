@@ -1,0 +1,88 @@
+<!-- app/pages/homepage.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="homepage.html" style="color: white; font-size: 18px; font-weight: bold; text-decoration: none;">ITE193</a>
+
+        <!-- 1. Display the username as the profile on the top right of the dashboard.-->
+            <div class="navbar-right">
+                <div class="profile">
+                    <div class="profile-icon" id="profile-icon"></div>
+                    <span id="profile-username"></span>
+                </div>
+
+            <div class="dropdown">
+                <button class="dropdown-btn"> ☰ </button>
+                    <div class="dropdown-content">
+
+                    <a class="sub-dropdown"> Settings</a>
+                    <div class="sub-dropdown-content">
+
+                        <!-- 1. User Profile Management -->
+                        <a href="#" onclick="goToProfile(event)">Edit Profile</a>
+                        <!-- 7. Change Password Feature -->
+                        <a href="#" onclick="goToChangePassword(event)">Change Password</a>
+                    </div>
+
+                    <a href="inventory.html" style="font-weight:600"> Inventory </a>
+
+                    <a href="#" onclick="handleLogout(event)">Logout</a>
+                    </div>
+            </div>
+    </nav>
+
+    <div class="welcome-box">
+        <h1>Welcome to ITE193!</h1>
+        <!--6. Login Functionality  * Upon successful login, display the first name of the user (server.js)-->
+        <p>Hello, <span id="welcome-firstname"></span>!</p>
+    </div>
+
+</body>
+
+<script>
+    //5th calls this api session to check session on page load (6th onto routes/auth.js)
+    fetch('/api/session')
+        .then(res => res.json())
+        .then(result => {
+            if (!result.success) {
+                // not logged in, kick back to login
+                window.location.href = '../login.html';
+            } else {
+                //7th succesfully displays the homepage.html, logged in using the username and displays it (8th onto homepage.html IF SESSION TO DESTROY)
+                // set profile display from session
+                document.getElementById('profile-username').textContent = result.username;
+                document.getElementById('profile-icon').textContent = result.username.charAt(0).toUpperCase();
+                //6.4 Login Functionality, displays the first name of the user on the homepage after login
+                document.getElementById('welcome-firstname').textContent = result.firstName;
+            }
+        });
+
+    //1.1 User Profile Management, when the user clicks on the Edit Profile
+    function goToProfile(event) {
+        event.preventDefault();
+        window.location.href = '/app/pages/profile.html';
+    }
+
+    function goToChangePassword(event) {
+        event.preventDefault();
+        window.location.href = 'change-password.html';
+    }
+
+    //8th WHEN USER LOGS OUT, DESTROYS THE SESSION FROM THE SERVER API/LOGOUT (9TH ONTO SERVER.JS)
+    function handleLogout(event) {
+        event.preventDefault();
+        fetch('/api/logout', { method: 'POST' })
+            //10TH AFTER SESSION DESTROYED, REDIRECTS BACK TO LOGIN PAGE
+            .then(() => window.location.href = '../login.html');
+    }
+</script>
+
+</html>

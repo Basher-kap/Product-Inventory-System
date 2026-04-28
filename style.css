@@ -1,0 +1,788 @@
+/* /style.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Zen+Antique&family=Quicksand:wght@300;400;500&display=swap');
+
+:root {
+    --bg:           #c9dfd7;
+    --teal:         #5b9e8f;
+    --teal-dark:    #3d7a6b;
+    --moss:         #7aab82;
+    --aqua:         #aed6c8;
+    --box-bg:       rgba(255, 253, 245, 0.72);
+    --text:         #2d4a40;
+    --muted:        #7a9e92;
+    --border:       #b8d4c8;
+    --error:        #c0706a;
+    --navbar-bg:    #3d7a6b;
+    --logout-bg:    #a07060;
+    --logout-hover: #7a4f40;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 400;
+    min-height: 100vh;
+    color: var(--text);
+    overflow-x: hidden;
+
+    background-image: url('assets/nostalgiatheme.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* ── Login Box / Register Box ── */
+.loginbox, .registerbox {
+    position: relative;
+    z-index: 1;
+    background: var(--box-bg);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 56px 48px;
+    border-radius: 26px;
+    border: 1.5px solid rgba(190, 225, 210, 0.8);
+    box-shadow:
+        0 8px 40px rgba(80, 140, 120, 0.15),
+        0 1px 0 rgba(255, 255, 255, 0.9) inset,
+        0 -1px 0 rgba(180, 210, 195, 0.4) inset;
+    max-width: 400px;
+    margin: 100px auto;
+
+    animation: floatIn 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.loginbox::before, .registerbox::before {
+    content: '';
+    position: absolute;
+    inset: -14px;
+    border-radius: 32px;
+    background: radial-gradient(ellipse, rgba(168, 214, 200, 0.35) 0%, transparent 70%);
+    z-index: -1;
+    animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes floatIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50%       { opacity: 1;   transform: scale(1.03); }
+}
+
+h1 {
+    font-family: 'Zen Antique', serif;
+    text-align: center;
+    color: var(--teal-dark);
+    font-size: 36px;
+    font-weight: 400;
+    margin-bottom: 6px;
+    letter-spacing: 0.06em;
+}
+
+h1::after {
+    content: '— ✦ —';
+    display: block;
+    font-size: 15px;
+    letter-spacing: 0.2em;
+    color: var(--moss);
+    margin-top: 6px;
+    margin-bottom: 30px;
+    opacity: 0.7;
+}
+
+h2, h3 {
+    font-family: 'Zen Antique', serif;
+    color: var(--teal-dark);
+}
+
+label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--muted);
+    font-size: 14.5px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+input[type="text"], input[type="password"], input[type="email"] {
+    width: 100%;
+    padding: 14px 18px;
+    margin-bottom: 22px;
+    border-radius: 14px;
+    border: 1.5px solid var(--border);
+    background: rgba(255, 255, 255, 0.6);
+    color: var(--text);
+    font-family: 'Quicksand', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+    outline: none;
+}
+
+input[type="text"]::placeholder,
+input[type="password"]::placeholder {
+    color: #aac9be;
+    font-style: italic;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: var(--teal);
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 0 0 3px rgba(91, 158, 143, 0.18);
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--teal), var(--moss));
+    color: white;
+    border-radius: 14px;
+    cursor: pointer;
+    border: none;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 16px rgba(91, 158, 143, 0.35);
+}
+
+button:hover {
+    opacity: 0.88;
+    box-shadow: 0 6px 20px rgba(91, 158, 143, 0.45);
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+.error {
+    color: var(--error);
+    font-size: 15px;
+    margin-bottom: 18px;
+}
+
+
+/* ── Homepage ── */
+.navbar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #3d7a6b, #5b9e8f);
+    padding: 20px 36px;
+    box-shadow: 0 2px 16px rgba(61, 122, 107, 0.3);
+}
+
+.navbar::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+}
+
+.navbar button {
+    width: auto;
+    padding: 10px 26px;
+    background: var(--logout-bg);
+    font-size: 15px;
+    box-shadow: none;
+    border-radius: 10px;
+    letter-spacing: 0.03em;
+}
+
+.navbar button:hover {
+    background: var(--logout-hover);
+    opacity: 1;
+}
+
+.welcome-box {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 80px auto;
+    padding: 28px 56px;
+
+    /* Transparent frosted glass */
+    background: rgba(255, 253, 245, 0.30);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    /* Soft teal/moss border */
+    border: 1.5px solid rgba(168, 214, 200, 0.55);
+    border-radius: 20px;
+
+    box-shadow:
+    0 8px 36px rgba(80, 140, 120, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.6) inset;
+
+    text-align: center;
+    animation: floatIn 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.welcome-box h1 {
+    font-size: 46px;
+    margin-bottom: 0;
+}
+
+/* Profile display*/
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.profile {
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-icon {
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+}
+
+/* 5. Apply changing of colors on buttons, menu, and sub-menus when the mouse hovers. */
+
+/* ========== Container ========== */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* ========== Button ========== */
+.dropdown-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff;
+    padding: 10px 18px;
+    font-size: 17px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.dropdown-btn:hover {
+    background: rgba(255,255,255,0.15);
+    transform: translateY(-1px);
+}
+
+/* ========== Main Dropdown ========== */
+.dropdown-content {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    top: 34px;
+    min-width: 220px;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 10;
+}
+
+/* Show dropdown */
+.dropdown:hover .dropdown-content {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* ========== Dropdown Items ========== */
+.dropdown-content a {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 13px 18px;
+    font-size: 15px;
+    color: #2d2d2d;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    border-radius: 9px;
+    margin: 5px;
+}
+
+.dropdown-content a:hover {
+    background: #0ac889;
+    color: #fff;
+}
+
+/* ========== Sub Dropdown ========== */
+.sub-dropdown {
+    position: relative;
+}
+
+/* Arrow indicator */
+.sub-dropdown::after {
+    content: "›";
+    margin-left: auto;
+    font-size: 20px;
+    opacity: 0.6;
+}
+
+/* ========== Submenu Panel ========== */
+.sub-dropdown-content {
+    position: absolute;
+    top: 0;
+    left: -210px;
+    min-width: 220px;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+    opacity: 0;
+    transform: translateX(-8px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    padding: 7px;
+}
+
+/* Show submenu */
+.sub-dropdown:hover + .sub-dropdown-content,
+.sub-dropdown-content:hover {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+/* Submenu links */
+.sub-dropdown-content a {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: rgb(9, 12, 11);
+    border-radius: 7px;
+}
+
+.sub-dropdown-content a:hover {
+    background: #0ac889;
+    color: #fff;
+}
+
+
+
+/* Inventory Page Design */
+.inventory-container {
+    max-width: 2100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.inventory-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.inventory-header h2 { 
+    font-family: 'Zen Antique', serif;
+    font-size: 28px;
+    color: var(--teal-dark);
+    font-weight: 4000;
+    letter-spacing: 0.05em;
+    -webkit-text-stroke: 1px darkgreen;
+}
+
+.inventory-header h2::after { content: none; }
+
+/* ── Inventory Grid ───────────────────────────── */
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 24px;
+}
+
+.product-card {
+    background: var(--box-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(80, 140, 120, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    animation: floatIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 32px rgba(80, 140, 120, 0.2);
+}
+
+.card-img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+}
+
+.card-img.no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    background: var(--aqua);
+    color: var(--muted);
+    border-radius: 0;         /* card handles the rounding */
+}
+
+.card-body {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.card-name {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+}
+
+.card-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.add-to-cart-btn {
+    margin-top: 8px;
+    width: 100%;
+    padding: 8px;
+    background: var(--teal);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: background 0.2s;
+}
+
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--teal-dark);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 20px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 8px 30px rgba(60, 120, 100, 0.3);
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast.error {
+    background: var(--error);
+}
+
+/* Cart Icon */
+.cart-icon-wrap {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.cart-icon-wrap .cart-icon {
+    font-size: 24px;
+    transition: transform 0.2s;
+}
+
+.cart-icon-wrap:hover .cart-icon {
+    transform: scale(1.15);
+}
+
+.cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background: var(--error);
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    font-family: 'Quicksand', sans-serif;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+
+    /* hidden by default */
+    opacity: 0;
+    transform: scale(0);
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.cart-badge.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Drawer */
+.cart-drawer {
+    position: fixed;
+    top: 0;
+    right: -420px;       /* hidden off screen */
+    width: 420px;
+    max-width: 95vw;
+    height: 100vh;
+    background: var(--box-bg);
+    backdrop-filter: blur(20px);
+    border-left: 1.5px solid var(--border);
+    box-shadow: -10px 0 40px rgba(60, 120, 100, 0.2);
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cart-drawer.open {
+    right: 0;            /* slides into view */
+}
+
+/* Drawer Header */
+.cart-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 24px 16px;
+    border-bottom: 1.5px solid var(--border);
+}
+
+.cart-drawer-header h3 {
+    font-family: 'Zen Antique', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--teal-dark);
+    margin: 0;
+}
+
+.cart-drawer-header h3::after { content: none; }
+
+.cart-drawer-close {
+    background: var(--teal);     
+    color: white;
+    border: none;
+    font-size: 16px;
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;         
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+/* Same hover behavior */
+.cart-drawer-close:hover {
+    background: var(--teal-dark);
+}
+
+/* Drawer Body */
+.cart-drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Empty cart state */
+.cart-empty-state {
+    text-align: center;
+    color: var(--muted);
+    padding: 60px 20px;
+}
+
+.cart-empty-state .cart-empty-icon {
+    font-size: 44px;
+    margin-bottom: 12px;
+}
+
+.cart-empty-state p {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Cart Item Card */
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: rgba(174, 214, 200, 0.15);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    animation: floatIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.cart-item-img {
+    width: 140px;
+    height: 140px;
+    border-radius: 14px;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.cart-item-no-img {
+    width: 140px;
+    height: 140px;
+    border-radius: 14px;
+    background: var(--aqua);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.cart-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.cart-item-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cart-item-sub {
+    font-size: 16px;
+    color: var(--muted);
+    margin-top: 3px;
+}
+
+.cart-item-total {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--teal-dark);
+    margin-top: 3px;
+}
+
+.remove-btn {
+    width: 50px;
+    height: 50px;
+}
+
+/* Cart Drawer Footer */
+.cart-drawer-footer {
+    padding: 16px 24px 24px;
+    border-top: 1.5px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cart-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-total-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+}
+
+.cart-total-amount {
+    font-family: 'Zen Antique', serif;
+    font-size: 22px;
+    color: var(--teal-dark);
+}
+
+.btn-checkout {
+    width: 100%;
+    background: var(--teal);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 13px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.btn-checkout:hover {
+    background: var(--teal-dark);
+    transform: translateY(-1px);
+}
+
+.btn-checkout:disabled {
+    background: var(--border);
+    color: var(--muted);
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Remove button */
+.remove-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--error);
+    padding: 4px;
+    flex-shrink: 0;
+    transition: transform 0.15s;
+}
+
+.remove-btn:hover { transform: scale(1.2); }
