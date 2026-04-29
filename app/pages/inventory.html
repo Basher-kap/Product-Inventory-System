@@ -13,6 +13,15 @@
     <nav class="navbar">
         <a href="homepage.html" style="color:white;font-size:18px;font-weight:bold;text-decoration:none;">ITE193</a>
         <div class="navbar-right">
+
+            // add button
+            <div class="nav-link" 
+                onclick="addProductModal()"
+                style="font-weight:600;">
+                + Add Product
+            </div>
+
+
             <div class="profile">
                 <div class="profile-icon" id="profile-icon"></div>
                 <span id="profile-username"></span>
@@ -82,6 +91,8 @@
     <div class="toast" id="toast"></div>
 
 <script src="/app/components/cart-drawer.js"></script>
+<script src="/app/components/add-product-modal.js"></script>
+<script src="/app/controllers/add-product.js"></script>
 
 
 </body>
