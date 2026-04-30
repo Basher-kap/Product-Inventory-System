@@ -2,7 +2,7 @@
 
 test('app name is correct', () => {
     const pkg = require('../package.json');
-    expect(pkg.name).toBe('a-ite100');
+    expect(pkg.name).toBe('a-ite193');
 });
 
 test('express is a dependency', () => {
