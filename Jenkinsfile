@@ -1,32 +1,40 @@
-// a-ITE193/Jenkinsfile
-
 pipeline {
-    agent any
+	agent any
+	
+	stages {
+		stage('Build') {
+			agent {
+				docker {
+					image 'node:18-alpine'
+					reuseNode true
+				}
+			}
+			steps {
+				sh '''
+					ls -la
+					node --version
+					npm --version
+					npm ci
+					npm run build
+					ls -la
+				'''
+			}
+		}
+		
+		stage ('Test') {
+			agent {
+				docker {
+					image 'node:18-alpine'
+					reuseNode true
+				}
+			}
 
-    tools {
-        nodejs 'NodeJS-20'
-    }
-
-    environment {
-        PROJECT_DIR = 'C:\\Users\\User\\source\\repos\\A-ITE193'
-    }
-
-    stages {
-        stage('Install') {
-            steps {
-                bat 'cd %PROJECT_DIR% && npm install'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                bat 'cd %PROJECT_DIR% && npm test'
-            }
-        }
-    }
-
-    post {
-        success { echo 'All tests passed!' }
-        failure { echo 'Build failed!' }
-    }
+			steps {
+				echo 'Test stage'
+				sh '''
+				 test -f build/index.html
+				 npm test
+				'''
+			}
+	}
 }
