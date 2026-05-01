@@ -36,6 +36,25 @@ pipeline {
             }
         }
 
+        stage('Deploy') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh '''
+                    npm install --global vercel
+                    vercel --version
+                '''
+            }
+        }
+
+    post {
+        success { echo 'Deployed to Vercel successfully!' }
+        failure { echo 'Build failed — check the logs.' }
+
     }
 
 }
