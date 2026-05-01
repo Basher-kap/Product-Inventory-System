@@ -41,7 +41,7 @@ pipeline {
             steps {
                 sh '''
                     npm install --global vercel
-                    vercel --version
+                    node_modules/.bin/vercel --version
                 '''
             }
         }
