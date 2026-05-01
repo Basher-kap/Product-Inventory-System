@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        VERCEL_PROJECT_ID = 'prj_lANhhYgapzaZHznlYYGdmwWLOiO6'
+        VERCEL_AUTH_TOKEN = credentials('vercel-token')
+    }
+
     stages {
         stage('Build') {
             agent {
@@ -42,6 +47,8 @@ pipeline {
                 sh '''
                     npm install vercel
                     node_modules/.bin/vercel --version
+                    echo "Deploying to Production. Project ID: $VERCEL_PROJECT_ID"
+                    vercel deploy --prod --token=$VERCEL_AUTH_TOKEN 
                 '''
             }
         }
