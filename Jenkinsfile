@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         VERCEL_PROJECT_ID = 'prj_lANhhYgapzaZHznlYYGdmwWLOiO6'
-        VERCEL_TEAM_ID = 'team_WIfIENWRU6H3qASpohyB7m6S'
+        VERCEL_ORG_ID = 'team_WIfIENWRU6H3qASpohyB7m6S'
         VERCEL_AUTH_TOKEN = credentials('vercel-token')
     }
 
@@ -49,7 +49,7 @@ pipeline {
                     npm install vercel
                     node_modules/.bin/vercel --version
                     echo "Deploying to Production. Project ID: $VERCEL_PROJECT_ID"
-                    echo "Using Team ID: $VERCEL_TEAM_ID"
+                    echo "Using Organization ID: $VERCEL_ORG_ID"
                     node_modules/.bin/vercel deploy --prod --token=$VERCEL_AUTH_TOKEN --yes
                 '''
             }
