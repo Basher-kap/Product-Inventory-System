@@ -33,3 +33,7 @@ app.use('/api', require('./app/routes/cart'));
 
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+
+app.get('/', (req, res) => {
+    res.send('Product Inventory System is running!');
+});
