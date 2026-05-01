@@ -11,12 +11,10 @@ pipeline {
             }
             steps {
                 sh '''
-                    ls -la
                     node --version
                     npm --version
                     npm ci
                     npm run build
-                    ls -la
                 '''
             }
         }
@@ -29,10 +27,7 @@ pipeline {
                 }
             }
             steps {
-                echo 'Test stage'
-                sh '''
-                    npm test
-                '''
+                sh 'npm test'
             }
         }
 
@@ -50,10 +45,6 @@ pipeline {
                 '''
             }
         }
-
-    post {
-        success { echo 'Deployed to Vercel successfully!' }
-        failure { echo 'Build failed — check the logs.' }
 
     }
 
