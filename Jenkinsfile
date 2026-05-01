@@ -40,7 +40,7 @@ pipeline {
             }
             steps {
                 sh '''
-                    npm install --global vercel
+                    npm install vercel
                     node_modules/.bin/vercel --version
                 '''
             }
