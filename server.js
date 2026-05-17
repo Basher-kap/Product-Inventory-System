@@ -1,3 +1,10 @@
+const express = require('express');
+const app = express();
+
+// middleware
+app.use(express.json());
+app.use(express.static(__dirname));
+
 // routes
 app.use('/api', require('./app/routes/auth'));
 app.use('/api', require('./app/routes/profile'));
