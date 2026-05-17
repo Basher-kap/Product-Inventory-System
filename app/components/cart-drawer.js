@@ -18,55 +18,76 @@ async function loadCartItems() {
     body.innerHTML = `<p style="color:var(--muted);text-align:center;font-size:14px;">Loading...</p>`;
 
     try {
-        const res  = await fetch('/api/cart');
+        const res = await fetch('/api/cart');
         const data = await res.json();
 
-        if (data.success) {
-            updateCartBadge(data.items);
-            renderCartItems(data.items);
+        if (!data.success) {
+            if (res.status === 401) {
+                window.location.href = '/app/login.html';
+                return;
+            }
+
+            body.innerHTML = `
+                <div class="cart-empty-state">
+                    <div class="cart-empty-icon">⚠️</div>
+                    <p>${escHtml(data.message || 'Failed to load cart.')}</p>
+                </div>`;
+            return;
         }
+
+        safeUpdateCartBadge(data.items);
+        renderCartItems(data.items);
     } catch (e) {
         body.innerHTML = `
             <div class="cart-empty-state">
                 <div class="cart-empty-icon">⚠️</div>
                 <p>Failed to load cart.</p>
             </div>`;
+        console.error('Cart load error:', e);
+    }
+}
+
+function safeUpdateCartBadge(items) {
+    if (typeof updateCartBadge === 'function') {
+        updateCartBadge(items);
     }
 }
 
 // remove item from cart
 async function removeFromCart(productCode) {
     try {
-        const res = await fetch(`/api/cart/${productCode}`, {
+        const res = await fetch(`/api/cart/${encodeURIComponent(productCode)}`, {
             method: 'DELETE'
         });
         const data = await res.json();
 
         if (data.success) {
-            showToast(data.message);
+            safeShowToast(data.message);
             updateCartBadge(data.items);
             renderCartItems(data.items);
         } else {
-            showToast(data.message, 'true');
+            safeShowToast(data.message, true);
         }
     } catch (e) {
         console.error('Error removing item from cart:', e);
+        safeShowToast('Failed to remove item from cart.', true);
     }
 }
 
 
 // render the cart items inside the drawer
-function renderCartItems(items) {
+function renderCartItems(items = []) {
     const body = document.getElementById('cart-drawer-body');
 
-    if (items.length === 0) {
+    if (!Array.isArray(items) || items.length === 0) {
         body.innerHTML = `
             <div class="cart-empty-state">
                 <div class="cart-empty-icon">🛒</div>
                 <p>Your cart is empty.<br>Add some products to get started!</p>
             </div>`;
 
-        document.getElementById('cart-total-amount').textContent = '₱0.00';
+        const totalAmount = document.getElementById('cart-total-amount');
+        if (totalAmount) totalAmount.textContent = '₱0.00';
         return;
     }
 
@@ -75,14 +96,16 @@ function renderCartItems(items) {
             ? `<img class="cart-item-img" src="${escHtml(item.productImage)}" alt="${escHtml(item.productName)}">`
             : `<div class="cart-item-no-img">📦</div>`;
 
-        const subtotal = (item.unitPrice * item.quantity).toFixed(2);
+        const unitPrice = Number(item.unitPrice) || 0;
+        const quantity = Number(item.quantity) || 0;
+        const subtotal = (unitPrice * quantity).toFixed(2);
 
         return `
             <div class="cart-item">
                 ${imgEl}
                 <div class="cart-item-info">
                     <div class="cart-item-name">${escHtml(item.productName)}</div>
-                    <div class="cart-item-sub">₱${item.unitPrice.toFixed(2)} × ${item.quantity}</div>
+                    <div class="cart-item-sub">₱${unitPrice.toFixed(2)} × ${quantity}</div>
                     <div class="cart-item-total">₱${subtotal}</div>
                 </div>
 
@@ -92,16 +115,35 @@ function renderCartItems(items) {
             </div>`;
     }).join('');
 
-    // compute total price
-    const totalPrice = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0).toFixed(2);
-    document.getElementById('cart-total-amount').textContent ='₱' + totalPrice.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const totalPrice = items.reduce((sum, item) => sum + (Number(item.unitPrice) || 0) * (Number(item.quantity) || 0), 0);
+    const totalElement = document.getElementById('cart-total-amount');
+    if (totalElement) {
+        totalElement.textContent = '₱' + totalPrice.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+}
+
+function escHtml(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#039;');
+}
+
+function safeShowToast(message, isError = false) {
+    if (typeof showToast === 'function') {
+        showToast(message, isError ? 'true' : false);
+    } else {
+        console[isError ? 'error' : 'log']('Toast:', message);
+    }
 }
 
 // checkout
 async function checkout(btn) {
     const totalText = document.getElementById('cart-total-amount').textContent;
     if (totalText === '₱0.00') {
-        showToast('Your cart is empty.', 'true');
+        safeShowToast('Your cart is empty.', true);
         return;
     }
 
@@ -115,12 +157,14 @@ async function checkout(btn) {
         const data = await res.json();
 
         if (data.success) {
-            showToast(data.message);
+            safeShowToast(data.message);
             closeCart();
-            updateCartBadge([]); // reset badge
-            loadInventory(); // refresh inventory stock after checkout
+            safeUpdateCartBadge([]); // reset badge
+            if (typeof loadInventory === 'function') {
+                loadInventory(); // refresh inventory stock after checkout
+            }
         } else {
-            showToast(data.message, 'true');
+            safeShowToast(data.message, true);
 
             btn.disabled = false;
             btn.textContent = 'Checkout';

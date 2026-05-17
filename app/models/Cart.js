@@ -1,20 +1,43 @@
-// app/models/Cart.js
+const db = require('../db');
 
-const mongoose = require('mongoose');
+async function getItems(username) {
+  const result = await db.query(
+    'SELECT product_code AS "productCode", product_name AS "productName", unit_price AS "unitPrice", product_image AS "productImage", quantity FROM cart_items WHERE username = $1 ORDER BY id',
+    [username]
+  );
+  return result.rows;
+}
 
-// detailed item of a cart, qty is stored here
-const cartItemSchema = new mongoose.Schema({
-    productCode: { type: String, required: true },
-    productName: { type: String, required: true },
-    unitPrice:   { type: Number, required: true },
-    productImage:{ type: String, default: '' },
-    quantity:    { type: Number, required: true, min: 1, default: 1 }
-});
+async function findItem(username, productCode) {
+  const result = await db.query(
+    'SELECT quantity FROM cart_items WHERE username = $1 AND product_code = $2',
+    [username, productCode]
+  );
+  return result.rows[0];
+}
 
-// one cart document per user, identified by username
-const cartSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true }, // one cart doc per user
-    items:    [cartItemSchema]
-}, { timestamps: true });
+async function addItem(username, item) {
+  await db.query(
+    `INSERT INTO cart_items (username, product_code, product_name, unit_price, product_image, quantity)
+     VALUES ($1, $2, $3, $4, $5, $6)
+     ON CONFLICT (username, product_code)
+     DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity`,
+    [username, item.productCode, item.productName, item.unitPrice, item.productImage, item.quantity]
+  );
+}
 
-module.exports = mongoose.model('Cart', cartSchema);
+async function deleteItem(username, productCode) {
+  await db.query('DELETE FROM cart_items WHERE username = $1 AND product_code = $2', [username, productCode]);
+}
+
+async function clear(username) {
+  await db.query('DELETE FROM cart_items WHERE username = $1', [username]);
+}
+
+module.exports = {
+  getItems,
+  findItem,
+  addItem,
+  deleteItem,
+  clear
+};

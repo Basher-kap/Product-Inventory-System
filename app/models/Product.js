@@ -1,13 +1,37 @@
-//app/models/Product.js
+const db = require('../db');
 
-const mongoose = require('mongoose');
+async function listAll() {
+  const result = await db.query(
+    'SELECT product_code AS "productCode", product_name AS "productName", quantity, unit_price AS "unitPrice", product_image AS "productImage" FROM products ORDER BY product_code'
+  );
+  return result.rows;
+}
 
-const productSchema = new mongoose.Schema({
-    productCode:  { type: String, required: true, unique: true, trim: true },
-    productName:  { type: String, required: true, trim: true },
-    quantity:     { type: Number, required: true, min: 0, default: 0 },
-    unitPrice:    { type: Number, required: true, min: 0, default: 0 },
-    productImage: { type: String, default: '' } // base64 data URI or URL
-}, { timestamps: true });
+async function findByCode(productCode) {
+  const result = await db.query(
+    'SELECT product_code AS "productCode", product_name AS "productName", quantity, unit_price AS "unitPrice", product_image AS "productImage" FROM products WHERE product_code = $1',
+    [productCode]
+  );
+  return result.rows[0];
+}
 
-module.exports = mongoose.model('Product', productSchema);
+async function create(product) {
+  await db.query(
+    'INSERT INTO products (product_code, product_name, quantity, unit_price, product_image) VALUES ($1, $2, $3, $4, $5)',
+    [product.productCode, product.productName, product.quantity, product.unitPrice, product.productImage]
+  );
+}
+
+async function updateQuantity(productCode, delta) {
+  await db.query(
+    'UPDATE products SET quantity = quantity + $1 WHERE product_code = $2',
+    [delta, productCode]
+  );
+}
+
+module.exports = {
+  listAll,
+  findByCode,
+  create,
+  updateQuantity
+};
