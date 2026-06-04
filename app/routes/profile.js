@@ -1,39 +1,53 @@
-//app/routes/profile.js
+// app/routes/profile.js
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
+const pool = require('../db');
 const requireLogin = require('../middleware/requireLogin');
 
-//1.4 User Profile Management, two routes to get and update user profile from the database backend(MongoDB)
-// GET /api/profile — fetch current user's profile
+// GET /api/profile
 router.get('/profile', requireLogin, async (req, res) => {
     try {
-        //4. File Handling, Ensure that user profiles are: * Saved to a file * Loaded from a file upon program execution
-        const user = await User.findOne(
-            { username: req.session.username },
-            'username firstName middleName lastName address email'
+        const result = await pool.query(
+            `SELECT username, first_name, middle_name, last_name, address, email
+             FROM users WHERE username = $1`,
+            [req.session.username]
         );
-        res.json({ success: true, user });
+
+        const user = result.rows[0];
+        if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
+
+        res.json({ success: true, user: {
+            username:   user.username,
+            firstName:  user.first_name,
+            middleName: user.middle_name,
+            lastName:   user.last_name,
+            address:    user.address,
+            email:      user.email
+        }});
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Failed to fetch profile' });
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Failed to fetch profile.' });
     }
 });
 
-// POST /api/profile — update current user's profile
+// POST /api/profile
 router.post('/profile', requireLogin, async (req, res) => {
     const { firstName, middleName, lastName, address, email } = req.body;
 
     try {
-        await User.findOneAndUpdate(
-            { username: req.session.username },
-            { firstName, middleName, lastName, address, email }
+        await pool.query(
+            `UPDATE users
+             SET first_name = $1, middle_name = $2, last_name = $3, address = $4, email = $5
+             WHERE username = $6`,
+            [firstName, middleName, lastName, address, email, req.session.username]
         );
 
-        req.session.firstName = firstName; // store firstName in session immediately after saving
+        req.session.firstName = firstName;
 
         res.json({ success: true, message: 'Profile updated successfully!' });
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Failed to update profile' });
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Failed to update profile.' });
     }
 });
 

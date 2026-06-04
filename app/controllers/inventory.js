@@ -69,6 +69,10 @@ let allProducts = []; //declares empty array
                             🛒 Add to Cart
                         </button>
 
+                        <button class="add-stock-btn" onclick="openAddStockModal('${escHtml(p.productCode)}', '${escHtml(p.productName)}')">
+                            + Add Stock
+                        </button>
+
                     </div>
                 </div>`;
         }).join('');
@@ -115,6 +119,74 @@ let allProducts = []; //declares empty array
             badge.classList.add('visible'); //shows the badge
         } else {
             badge.classList.remove('visible');
+        }
+    }
+    
+    // ── Add Stock Modal ──────────────────────────────────────────
+
+    function openAddStockModal(productCode, productName) {
+        // remove existing modal if any
+        const old = document.getElementById('add-stock-overlay');
+        if (old) old.remove();
+
+        const modal = document.createElement('div');
+        modal.id = 'add-stock-overlay';
+        modal.className = 'modal-overlay active';
+        modal.innerHTML = `
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>+ Add Stock</h3>
+                    <button class="modal-close" onclick="closeAddStockModal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <p style="margin-bottom:12px; font-weight:600;">${escHtml(productName)}</p>
+                    <div class="form-group">
+                        <label for="inp-add-qty">Quantity to Add</label>
+                        <input type="number" id="inp-add-qty" placeholder="e.g. 10" min="1">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-cancel" onclick="closeAddStockModal()">Cancel</button>
+                    <button class="btn-primary" onclick="submitAddStock('${escHtml(productCode)}')">Confirm</button>
+                </div>
+            </div>`;
+
+        // close on backdrop click
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeAddStockModal(); });
+        document.body.appendChild(modal);
+        document.getElementById('inp-add-qty').focus();
+    }
+
+    function closeAddStockModal() {
+        const modal = document.getElementById('add-stock-overlay');
+        if (modal) modal.remove();
+    }
+
+    async function submitAddStock(productCode) {
+        const addQty = parseInt(document.getElementById('inp-add-qty').value);
+
+        if (!addQty || addQty <= 0) {
+            showToast('Please enter a valid quantity.', true);
+            return;
+        }
+
+        try {
+            const res  = await fetch(`/api/inventory/${productCode}/stock`, {
+                method:  'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ addQty })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                showToast(data.message);
+                closeAddStockModal();
+                loadInventory(); // refresh cards so new qty shows immediately
+            } else {
+                showToast(data.message, true);
+            }
+        } catch (e) {
+            showToast('Failed to update stock. Please try again.', true);
         }
     }
 

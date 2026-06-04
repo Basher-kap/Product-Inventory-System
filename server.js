@@ -1,9 +1,17 @@
 const express = require('express');
+const session = require('express-session');
 const app = express();
 
 // middleware
+app.use(express.json({ limit: '10mb' }));
 app.use(express.json());
 app.use(express.static(__dirname));
+app.use(session({
+    secret: 'ite193-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }
+}));
 
 // routes
 app.use('/api', require('./app/routes/auth'));

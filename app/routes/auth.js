@@ -1,84 +1,86 @@
-//app/routes/auth.js
+// app/routes/auth.js
 const express = require('express');
-const router = express.Router();
-const User = require('../models/User');
+const router  = require('express').Router();
+const pool    = require('../db');
 
-//2nd handles login session upon receiving the credentials
-//2.2 User Authentication, verifes the username and password, if correct creates a session and sends back success response(back to login.js)
+// POST /api/login
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        const user = await User.findOne({ username });
+        const result = await pool.query(
+            'SELECT * FROM users WHERE username = $1',
+            [username]
+        );
+
+        const user = result.rows[0];
 
         if (!user) return res.status(404).json({ success: false, message: 'Invalid username.' });
         if (user.password !== password) return res.status(401).json({ success: false, message: 'Invalid password.' });
 
-        // save username in session
-        //this creates a session as a username key (3rd onto above)
-        req.session.username = user.username;
+        req.session.username  = user.username;
+        req.session.firstName = user.first_name;
 
-        req.session.firstName = user.firstName; // also save first name for display on homepage
-
-
-        res.json({ success: true, username: user.username, firstName: user.firstName });
+        res.json({ success: true, username: user.username, firstName: user.first_name });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ success: false, message: 'Server error.' });
     }
 });
 
-// GET /api/session — 6th to check who is logged in using session
+// GET /api/session
 router.get('/session', (req, res) => {
-    if (req.session.username) { //reads the session using the cookie to check if that username exists
-        res.json({ success: true, username: req.session.username, firstName: req.session.firstName }); //if exists, sends back true and username (7th onto homepage.html)
+    if (req.session.username) {
+        res.json({ success: true, username: req.session.username, firstName: req.session.firstName });
     } else {
         res.status(401).json({ success: false, message: 'Not logged in.' });
     }
 });
 
-//9TH WHEN LOGOUT EXECUTED, SESSION IS DESTROYED (10TH BACK TO HOMEPAGE.HTML)
+// POST /api/logout
 router.post('/logout', (req, res) => {
     req.session.destroy();
     res.json({ success: true, message: 'Logged out.' });
 });
 
-// GET /api/users — no longer needed for login, kept for reference
-router.get('/users', async (req, res) => {
-    try {
-        const users = await User.find({}, 'username password');
-        res.json({ users });
-    } catch (err) {
-        res.status(500).json({ success: false, message: 'Failed to read user data' });
-    }
-});
-
-// POST /api/register — create new account
-//3.3 Menu Enhcancement (Create new user account), routes and sends the new account credentials
+// POST /api/register
 router.post('/register', async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        // check if username already exists
-        const existing = await User.findOne({ username });
-        if (existing) {
-            return res.status(409).json({ 
-                success: false, 
-                message: 'Username already taken. Please choose another.' 
+        const existing = await pool.query(
+            'SELECT username FROM users WHERE username = $1',  // username instead of id
+            [username]
+        );
+
+        if (existing.rows.length > 0) {
+            return res.status(409).json({
+                success: false,
+                message: 'Username already taken. Please choose another.'
             });
         }
 
-        // create new user
-        await User.create({ username, password });
+        await pool.query(
+            'INSERT INTO users (username, password) VALUES ($1, $2)',
+            [username, password]
+        );
 
-        //6.1 Login Functionality,  * Allow users to log in using their credentials
-        req.session.username = username; // auto-login after registration
+        req.session.username = username;
 
-        res.json({ 
-            success: true, 
-            message: 'Account created successfully! You can now log in.' 
-        });
+        res.json({ success: true, message: 'Account created successfully! You can now log in.' });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ success: false, message: 'Failed to create account.' });
+    }
+});
+
+// GET /api/users
+router.get('/users', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT username, password FROM users');
+        res.json({ users: result.rows });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Failed to read user data' });
     }
 });
 

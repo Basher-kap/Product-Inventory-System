@@ -34,23 +34,36 @@ async function loadCartItems() {
     }
 }
 
-// remove item from cart
 async function removeFromCart(productCode) {
+    // 1. instantly remove the item visually
+    const allItems  = document.querySelectorAll('.cart-item');
+    let   removedEl = null;
+
+    allItems.forEach(el => {
+        const btn = el.querySelector('.remove-btn');
+        if (btn && btn.getAttribute('onclick').includes(productCode)) {
+            removedEl = el;
+            el.style.transition = 'opacity 0.2s';
+            el.style.opacity    = '0';
+            setTimeout(() => el.remove(), 200);
+        }
+    });
+
     try {
-        const res = await fetch(`/api/cart/${productCode}`, {
-            method: 'DELETE'
-        });
+        const res  = await fetch(`/api/cart/${productCode}`, { method: 'DELETE' });
         const data = await res.json();
 
         if (data.success) {
             showToast(data.message);
             updateCartBadge(data.items);
-            renderCartItems(data.items);
+            renderCartItems(data.items); // re-render to sync total price
         } else {
-            showToast(data.message, 'true');
+            // if server failed, put item back by re-rendering
+            showToast(data.message, true);
+            loadCartItems();
         }
     } catch (e) {
-        console.error('Error removing item from cart:', e);
+        loadCartItems(); // restore on error
     }
 }
 
@@ -131,3 +144,4 @@ async function checkout(btn) {
         btn.textContent = 'Checkout';
     }
 }
+
