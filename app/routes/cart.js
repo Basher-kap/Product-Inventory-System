@@ -15,7 +15,7 @@ router.get('/cart', requireLogin, async (req, res) => {
         const items = result.rows.map(r => ({
             productCode:  r.product_code,
             productName:  r.product_name,
-            unitPrice:    r.unit_price,
+            unitPrice:    parseFloat(r.unit_price),
             productImage: r.product_image,
             quantity:     r.quantity
         }));
@@ -74,7 +74,7 @@ router.post('/cart', requireLogin, async (req, res) => {
         const items = cartResult.rows.map(r => ({
             productCode:  r.product_code,
             productName:  r.product_name,
-            unitPrice:    r.unit_price,
+            unitPrice:    parseFloat(r.unit_price),
             productImage: r.product_image,
             quantity:     r.quantity
         }));

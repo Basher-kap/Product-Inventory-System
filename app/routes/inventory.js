@@ -15,7 +15,7 @@ router.get('/inventory', requireLogin, async (req, res) => {
             productCode:  p.product_code,
             productName:  p.product_name,
             quantity:     p.quantity,
-            unitPrice:    p.unit_price,
+            unitPrice:    parseFloat(p.unit_price),
             productImage: p.product_image
         }));
 
@@ -39,7 +39,7 @@ router.post('/inventory', requireLogin, async (req, res) => {
 
     try {
         const existing = await pool.query(
-            'SELECT id FROM products WHERE product_code = $1',
+            'SELECT product_code FROM products WHERE product_code = $1',
             [productCode]
         );
 
@@ -65,7 +65,7 @@ router.post('/inventory', requireLogin, async (req, res) => {
                 productCode:  p.product_code,
                 productName:  p.product_name,
                 quantity:     p.quantity,
-                unitPrice:    p.unit_price,
+                unitPrice:    parseFloat(p.unit_price),
                 productImage: p.product_image
             }
         });
