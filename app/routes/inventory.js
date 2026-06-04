@@ -75,4 +75,44 @@ router.post('/inventory', requireLogin, async (req, res) => {
     }
 });
 
+// PATCH /api/inventory/:productCode/stock — add stock quantity
+router.patch('/inventory/:productCode/stock', requireLogin, async (req, res) => {
+    const { productCode } = req.params;
+    const { addQty } = req.body;
+
+    if (!addQty || isNaN(addQty) || parseInt(addQty) <= 0) {
+        return res.status(400).json({ success: false, message: 'Please enter a valid quantity.' });
+    }
+
+    try {
+        const result = await pool.query(
+            `UPDATE products
+             SET quantity = quantity + $1
+             WHERE product_code = $2
+             RETURNING *`,
+            [parseInt(addQty), productCode]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Product not found.' });
+        }
+
+        const p = result.rows[0];
+        return res.json({
+            success: true,
+            message: `Stock updated! "${p.product_name}" now has ${p.quantity} units.`,
+            product: {
+                productCode:  p.product_code,
+                productName:  p.product_name,
+                quantity:     p.quantity,
+                unitPrice:    parseFloat(p.unit_price),
+                productImage: p.product_image
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ success: false, message: 'Failed to update stock.' });
+    }
+});
+
 module.exports = router;
