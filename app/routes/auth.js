@@ -1,7 +1,7 @@
 // app/routes/auth.js
 const express = require('express');
-const router = express.Router();
-const pool = require('../db');
+const router  = require('express').Router();
+const pool    = require('../db');
 
 // POST /api/login
 router.post('/login', async (req, res) => {
@@ -18,7 +18,7 @@ router.post('/login', async (req, res) => {
         if (!user) return res.status(404).json({ success: false, message: 'Invalid username.' });
         if (user.password !== password) return res.status(401).json({ success: false, message: 'Invalid password.' });
 
-        req.session.username = user.username;
+        req.session.username  = user.username;
         req.session.firstName = user.first_name;
 
         res.json({ success: true, username: user.username, firstName: user.first_name });
@@ -49,7 +49,7 @@ router.post('/register', async (req, res) => {
 
     try {
         const existing = await pool.query(
-            'SELECT id FROM users WHERE username = $1',
+            'SELECT username FROM users WHERE username = $1',  // username instead of id
             [username]
         );
 
@@ -74,7 +74,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// GET /api/users (kept for reference)
+// GET /api/users
 router.get('/users', async (req, res) => {
     try {
         const result = await pool.query('SELECT username, password FROM users');
