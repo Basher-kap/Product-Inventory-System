@@ -1,9 +1,21 @@
+require('dotenv').config();
 const express = require('express');
+const session = require('express-session');
 const app = express();
 
 // middleware
 app.use(express.json());
+app.use((req, res, next) => {
+    console.log('Incoming request:', req.method, req.url, req.body);
+    next();
+});
 app.use(express.static(__dirname));
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'keyboard cat',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }
+}));
 
 // routes
 app.use('/api', require('./app/routes/auth'));
